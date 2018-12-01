@@ -3,17 +3,17 @@ var app = global.express();
 var mongoose = require('mongoose');
 var api = require('./api');
 
-//Set up default mongoose connection
+// Set up default mongoose connection
 var mongoDB = 'mongodb://127.0.0.1/my_database';
 mongoose.connect(mongoDB);
 // Get Mongoose to use the global promise library
 // mongoose.Promise = global.Promise;
-//Get the default connection
+// Get the default connection
 global.DB = mongoose.connection;
 
-//Bind connection to error event (to get notification of connection errors)
+// Bind connection to error event (to get notification of connection errors)
 DB.on('error', console.error.bind(console, 'MongoDB connection error:'));
-DB.once('open', function() {
+DB.once('open', function () {
     console.log('MongoDB connected!');
   });
 
