@@ -3,13 +3,11 @@
 
 var router = global.express.Router();
 var uuidv1 = require('uuid/v1');
-var mongoose = require('mongoose');
 var Company = require('../../../db/models/company');
 
 
 // ** create a new company entry */
 router.post('/', function handle(req, res) {
-
   // TODO: validation of input - body in specific format
   var displayName = req.body.displayName;
   var name = displayName.toLowerCase();
