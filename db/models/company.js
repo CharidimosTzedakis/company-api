@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-import workspaceSchema from './workspace';
+var workspaceSchema = require('./workspace');
 
 function arrayHasDuplicates(arrayOfStrings) {
   var uniq = arrayOfStrings
@@ -20,8 +20,7 @@ var companySchema = new mongoose.Schema({
   _id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    unique: true,
-    index: true
+    unique: true
   },
   displayName: {
     type: String,

@@ -9,10 +9,12 @@
   "author": "Charidimos Tzedakis",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "mocha": "^3.2.0",
     "mongoose": "^5.3.14",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "winston": "1.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
