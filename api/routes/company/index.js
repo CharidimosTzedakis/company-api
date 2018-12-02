@@ -27,17 +27,15 @@ router.post('/', function handle(req, res) {
     name,
     workspaces: workspacesWithId
   };
-  try {
-    Company.create(companyDocument, function result(err, results) {
-      console.log(results);
-      if (err) {
-        console.log(err);
-      }
-    });
-  } catch (error) {
-    console.error(error);
-  }
-  res.send('Hello World!');
+
+  Company.create(companyDocument, function result(errCreate, createdCompany) {
+    if (errCreate) {
+      winston.info('POST /api/company: Error while creating company document ' + errCreate);
+      res.status(500).send('Error while creating company entry.');
+    }
+    winston.info('PATCH /api/company: Sucessfully updated: ' + createdCompany);
+    res.send();
+  });
 });
 
 // ** update an existing company */
