@@ -1,3 +1,4 @@
+/* global DB, winston, express */
 'use strict';
 
 var router = global.express.Router();
@@ -18,10 +19,10 @@ router.post('/', function handle(req, res) {
     return Object.assign(w, { _id,  name: w.displayName.toLowerCase() } );
   });
   //* RFC4122 version 1 UUID
-  var testId = uuidv1();
+  var newId = uuidv1();
   // var newId = new mongoose.mongo.ObjectId(uuidv1());
   var  companyDocument = {
-    _id: testId,
+    _id: newId,
     displayName,
     name,
     workspaces: workspacesWithId
@@ -39,14 +40,41 @@ router.post('/', function handle(req, res) {
   res.send('Hello World!');
 });
 
-
 // ** update an existing company */
-router.patch('/', function handle(req, res) {
-  var test;
-  // DB.newCompany();
-  //* RFC4122 version 1 UUID
-  var NewId = new mongoose.mongo.ObjectId('56cb91bdc3464f14678934ca');
-  res.send('Hello World!');
+router.patch('/:id', function handle(req, res) {
+  // TODO: validation of input - body in specific format
+  var companyId = req.params.id;
+  Company.findById(companyId, function findResult(findErr, company) {
+    if (findErr) {
+      winston.info('PATCH /api/company: Error while fetching company from DB ' + findErr);
+      res.status(500).send('Error while updating.');
+    } else if (company) {
+      var displayName = req.body.displayName;
+      var name = displayName.toLowerCase();
+      var workspaces = req.body.workspaces;
+      var workspacesWithId = workspaces.map(function map(w) {
+        var _id = uuidv1();
+        return Object.assign(w, { _id,  name: w.displayName.toLowerCase() } );
+      });
+
+      //* update document
+      if (displayName) {
+        company._doc.displayName = displayName;
+        company._doc.name = name; 
+      }
+      if (workspaces) {
+        company._doc.workspaces = workspacesWithId;
+      }
+      company.save(function onSave(saveErr, updatedCompany) {
+        if (saveErr) res.status(400).send({ error: saveErr });
+        winston.info('PATCH /api/company: Sucessfully updated: ' + updatedCompany);
+        res.send();
+      });
+    } else {
+      winston.info('PATCH /api/company: Company not found with id: ' + companyId);
+      res.status(404).send('PATCH /api/company: company not found.');
+    }
+  });
 });
 
 module.exports = router;
