@@ -1,7 +1,7 @@
 /* global app, request */
 
 describe('Task API Routes', function companyRouteTests() {
-  // This function will run before every test to clear database
+  // This function will run before every test to initialize database
   beforeEach(function clearDB(done) {
     app.db.object = {};
     app.db.object.tasks = [{
@@ -17,13 +17,27 @@ describe('Task API Routes', function companyRouteTests() {
     done();
   });
 
-  // Testing the save task expecting status 201 of success
   describe('POST /company', function createCompanyTest() {
     it('creates a new company', function done(done) {
-      request.post('/tasks')
+      request.post('/company')
         .send({
-          title: 'run',
-          done: false
+          displayName: 'Xara',
+          workspaces: [
+            {
+              displayName: 'XaraLondon',
+              users: [
+                { email: 'harris.jedakis@gmail.com', role: 'admin'},
+                { email: 'har_manis@hotmail.com', role: 'basic'}
+              ]
+            },
+            {
+              displayName: 'XaraBerlin',
+              users: [
+                { email: 'harris.jedakis@gmail.com', role: 'admin'},
+                { email: 'har_manis@hotmail.com', role: 'basic'}
+              ]
+            }
+          ]
         })
         .expect(201)
         .end(function end(err, res) {
@@ -32,15 +46,30 @@ describe('Task API Routes', function companyRouteTests() {
     });
   });
 
-  // Testing the save task expecting status 201 of success
-  describe('POST /company', function createCompanyTest() {
-    it('creates a new company', function done(done) {
-      request.post('/tasks')
+
+  describe('PATCH /company', function createCompanyTest() {
+    it('updates an existing company', function done(done) {
+      request.patch('/company/')
         .send({
-          title: 'run',
-          done: false
+          displayName: 'ATOS',
+          workspaces: [
+            {
+              displayName: 'ATOSAthens',
+              users: [
+                { email: 'charidimos.jedakis@gmail.com', role: 'admin'},
+                { email: 'har_manis@hotmail.com', role: 'basic'}
+              ]
+            },
+            {
+              displayName: 'ATOSBrussels',
+              users: [
+                {email: 'charis.jedakis@gmail.com', role: 'admin'},
+                {email: 'har_manis@hotmail.com', role: 'basic'}
+              ]
+            }
+          ]
         })
-        .expect(201)
+        .expect(200)
         .end(function end(err, res) {
           done(err);
         });
