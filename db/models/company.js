@@ -12,15 +12,16 @@ function arrayHasDuplicates(arrayOfStrings) {
     }, {});
 
   var duplicates = Object.keys(uniq).filter(function filter(a) {return uniq[a] > 1;});
-  if (duplicates) return false;
+  if (duplicates.length > 0) return false;
   return true;
 }
 
 var companySchema = new mongoose.Schema({
   _id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
-    unique: true
+    unique: true,
+    index: true
   },
   displayName: {
     type: String,
@@ -44,9 +45,9 @@ var companySchema = new mongoose.Schema({
     validate: {
       //* custom valdator for duplicate names
       validator: function validateArray(v) {
-        var names;
-        v.forEach(function each(value, i) {
-          names[i].push(value.name);
+        var names = [];
+        v.forEach(function each(embededDoc) {
+          names.push(embededDoc._doc.name);
         });
         return arrayHasDuplicates(names);
       },

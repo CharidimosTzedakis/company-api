@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var userSchema = require('./user');
+// mongoose.Schema.Types.ObjectId
 
 function arrayHasDuplicates(arrayOfStrings) {
   var uniq = arrayOfStrings
@@ -12,14 +13,16 @@ function arrayHasDuplicates(arrayOfStrings) {
     }, {});
 
   var duplicates = Object.keys(uniq).filter(function filter(a) {return uniq[a] > 1;});
-  if (duplicates) return false;
+  if (duplicates.length > 0) return false;
   return true;
 }
 
 var workspaceSchema =  new mongoose.Schema({
   _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true
+    type: String,
+    required: true,
+    unique: true,
+    index: true
   },
   displayName: {
     type: String,
@@ -42,9 +45,9 @@ var workspaceSchema =  new mongoose.Schema({
     validate: {
       //* custom valdator for duplicate emails
       validator: function validateArray(v) {
-        var emails;
-        v.forEach(function each(value, i) {
-          emails[i].push(value.email);
+        var emails = [];
+        v.forEach(function each(embededDoc) {
+          emails.push(embededDoc._doc.email);
         });
         return arrayHasDuplicates(emails);
       },

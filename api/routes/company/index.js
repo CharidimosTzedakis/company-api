@@ -8,24 +8,35 @@ var Company = require('../../../db/models/company');
 
 // ** create a new company entry */
 router.post('/', function handle(req, res) {
+
+  // TODO: validation of input - body in specific format
   var displayName = req.body.displayName;
   var name = displayName.toLowerCase();
-  var workspaces = req.workspaces;
+  var workspaces = req.body.workspaces;
+  var workspacesWithId = workspaces.map(function map(w) {
+    var _id = uuidv1();
+    return Object.assign(w, { _id,  name: w.displayName.toLowerCase() } );
+  });
   //* RFC4122 version 1 UUID
   var testId = uuidv1();
   // var newId = new mongoose.mongo.ObjectId(uuidv1());
   var  companyDocument = {
+    _id: testId,
     displayName,
     name,
-    workspaces
+    workspaces: workspacesWithId
   };
-
-  Company.create(companyDocument, function result(err, results) {
-    res.send(results);
-    if (err) {
-      res.send('Hello World!');
-    }
-  });
+  try {
+    Company.create(companyDocument, function result(err, results) {
+      console.log(results);
+      if (err) {
+        console.log(err);
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+  res.send('Hello World!');
 });
 
 
