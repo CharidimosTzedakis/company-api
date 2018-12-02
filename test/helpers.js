@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'test';
+
 var supertest = require('supertest');
 var chai = require('chai');
 var uuid = require('uuid/v1');

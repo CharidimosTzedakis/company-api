@@ -1,6 +1,16 @@
-/* global app, request, testDB,  Company */
+/* global app, request, testDB,  Company, mongoose */
 
 describe('Company API Routes', function companyRouteTests() {
+
+  before(function dropCollection(done) {
+    mongoose.connection.db.dropCollection('companies', function dropResult(err, result) {
+      if (err) {
+        throw new Error('Error while initializing test DB - aborting.');
+      }
+      done();
+    });
+  });
+
   // initialize datavase for the tests
   before(function initTestDB(done) {
     var  companyDocument = {
