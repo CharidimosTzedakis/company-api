@@ -59,11 +59,11 @@ router.patch('/:id', function handle(req, res) {
 
       //* update document
       if (displayName) {
-        company._doc.displayName = displayName;
-        company._doc.name = name; 
+        company.displayName = displayName;
+        company.name = name;
       }
       if (workspaces) {
-        company._doc.workspaces = workspacesWithId;
+        company.workspaces = workspacesWithId;
       }
       company.save(function onSave(saveErr, updatedCompany) {
         if (saveErr) res.status(400).send({ error: saveErr });
