@@ -32,7 +32,7 @@ router.post('/', function handle(req, res) {
       res.status(500).send('Error while creating company entry.');
     }
     winston.info('PATCH /api/company: Sucessfully updated: ' + createdCompany);
-    res.send();
+    res.status(201).send();
   });
 });
 

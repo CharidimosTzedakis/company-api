@@ -4,23 +4,26 @@
   "description": "solution to xara test 1",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "test": "NODE_ENV=test mocha test/**/*.js"
   },
   "author": "Charidimos Tzedakis",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "mocha": "^3.2.0",
     "mongoose": "^5.3.14",
     "uuid": "^3.3.2",
     "winston": "1.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
+    "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-es5": "^1.2.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-react": "^7.11.1"
+    "eslint-plugin-react": "^7.11.1",
+    "mocha": "^3.2.0",
+    "supertest": "^3.3.0"
   }
 }
