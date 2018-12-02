@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha ./test/routes/company.js"
+    "test": "mocha ./test/*.js"
   },
   "author": "Charidimos Tzedakis",
   "license": "ISC",
