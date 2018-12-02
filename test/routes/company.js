@@ -1,20 +1,28 @@
-/* global app, request */
+/* global app, request, testDB,  Company */
 
-describe('Task API Routes', function companyRouteTests() {
-  // This function will run before every test to initialize database
-  beforeEach(function clearDB(done) {
-    app.db.object = {};
-    app.db.object.tasks = [{
-      id: uuid(),
-      title: 'study',
-      done: false
-    }, {
-      id: uuid(),
-      title: 'work',
-      done: true
-    }];
-    app.db.write();
-    done();
+describe('Company API Routes', function companyRouteTests() {
+  // initialize datavase for the tests
+  before(function initTestDB(done) {
+    var  companyDocument = {
+      _id: 'e5c6bf62-f634-11e8-9814-619f28a0ac11',
+      displayName: 'UnifyAthens',
+      name: 'unifyathens',
+      workspaces: [
+        {
+          displayName: 'UnifyAthens',
+          users: [
+            { email: 'charidimos.jedakis@gmail.com', role: 'admin'},
+            { email: 'har_manis@hotmail.com', role: 'basic'}
+          ]
+        }
+      ]
+    };
+    Company.create(companyDocument, function result(errCreate, createdCompany) {
+      if (errCreate) {
+        throw new Error('Error while initializing test DB - aborting.');
+      }
+      done();
+    });
   });
 
   describe('POST /company', function createCompanyTest() {
@@ -46,10 +54,9 @@ describe('Task API Routes', function companyRouteTests() {
     });
   });
 
-
   describe('PATCH /company', function createCompanyTest() {
     it('updates an existing company', function done(done) {
-      request.patch('/company/')
+      request.patch('/company/e5c6bf62-f634-11e8-9814-619f28a0ac11')
         .send({
           displayName: 'ATOS',
           workspaces: [
