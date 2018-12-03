@@ -31,7 +31,8 @@ DB.once('open', function onOpen() {
 //* mounting the api
 app.use('/api', api);
 
-
-app.listen(3000, function onListen() {
-  winston.info('Microservice listening on port 3000...');
+app.listen(6000, function onListen() {
+  winston.info('Microservice listening on port 6000...');
 });
+
+module.exports = app;
