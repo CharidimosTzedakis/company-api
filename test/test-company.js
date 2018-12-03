@@ -2,10 +2,12 @@
 
 describe('Company API Routes', function companyRouteTests() {
   before(function dropCollection(done) {
-    testDB.dropCollection('companies', function dropResult(err, result) {
+    Company.deleteMany({}, function removeResult(err, result) {
       if (err) {
+        console.log(err);
         throw new Error('Error while initializing test DB - aborting.');
       }
+      console.log(result);
       done();
     });
   });
@@ -28,7 +30,8 @@ describe('Company API Routes', function companyRouteTests() {
     };
     Company.create(companyDocument, function result(errCreate, createdCompany) {
       if (errCreate) {
-        throw new Error('Error while initializing test DB - aborting.');
+        console.log(errCreate);
+        throw new Error('Error while inserting dummy data to test DB - aborting.');
       }
       done();
     });
