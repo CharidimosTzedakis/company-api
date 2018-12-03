@@ -4,11 +4,20 @@
 var router = global.express.Router();
 var uuidv1 = require('uuid/v1');
 var Company = require('../../../db/models/company');
-
+var Ajv = require('ajv');
+var workspaceJSONSchema = require();
 
 // ** create a new workspace entry within a specific company*/
 router.post('/:companyId', function handle(req, res) {
-  // TODO: validation of input - body in specific format
+  //* validation of json data inside req body
+  var ajv = new Ajv();
+  var validate = ajv.compile(workspaceJSONSchema);
+  var valid = validate(req.body);
+  if (!valid) {
+    res.status(400).send('Invalid request body.');
+    return;
+  }
+
   var companyId = req.params.companyId;
   Company.findById(companyId, function findResult(findErr, company) {
     if (findErr) {
