@@ -31,7 +31,7 @@ router.post('/', function handle(req, res) {
       winston.info('POST /api/company: Error while creating company document ' + errCreate);
       res.status(500).send('Error while creating company entry.');
     }
-    winston.info('PATCH /api/company: Sucessfully updated: ' + createdCompany);
+    winston.info('PATCH /api/company: Sucessfully created company: ' + createdCompany);
     res.status(201).send();
   });
 });
