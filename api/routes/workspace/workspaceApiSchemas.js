@@ -1,5 +1,5 @@
 
-//* json schema when receiving a workspace through req.body
+//* json schema when receiving requests for /workspace api
 var workspaceJSONSchema = {
   'properties': {
     'displayName': { 'type': 'string'},

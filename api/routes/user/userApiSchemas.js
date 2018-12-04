@@ -1,6 +1,6 @@
 
-//* json schema when receiving a workspace through req.body
-var userApiJSONSchema = {
+//* json schema when receiving requests for /user api
+var createUserJSONSchema = {
   'properties': {
     'workspaceName': { 'type': 'string'},
     'user': {
@@ -17,6 +17,16 @@ var userApiJSONSchema = {
   'additionalProperties': false
 };
 
+var deleteUserJSONSchema = {
+  'properties': {
+    'workspaceName': { 'type': 'string'},
+    'userEmail': {'type': 'string'}
+  },
+  'required': ['workspaceName', 'userEmail'],
+  'additionalProperties': false
+};
+
 module.exports = {
-  userApiJSONSchema
+  createUserJSONSchema,
+  deleteUserJSONSchema
 };
