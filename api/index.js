@@ -7,7 +7,7 @@ var user = require('./routes/user');
 var workspace = require('./routes/workspace');
 
 router.use('/company', company);
-// router.use('/user', user);
-// router.use('/workspace', workspace);
+router.use('/workspace', workspace);
+router.use('/user', user);
 
 module.exports = router;

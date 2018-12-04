@@ -5,12 +5,13 @@ var router = global.express.Router();
 var uuidv1 = require('uuid/v1');
 var Company = require('../../../db/models/company');
 var Ajv = require('ajv');
-var workspaceJSONSchema = require();
+var workspaceJSONSchema = require('./apiSchemas').workspaceJSONSchema;
 
-// ** create a new workspace entry within a specific company*/
-router.post('/:companyId', function handle(req, res) {
+// ** create a new workspace entry within a specific company */
+router.post('/:companyName', function handle(req, res) {
   //* validation of json data inside req body
-  var ajv = new Ajv();
+  var ajv = new Ajv({allErrors: true});
+
   var validate = ajv.compile(workspaceJSONSchema);
   var valid = validate(req.body);
   if (!valid) {
@@ -18,8 +19,8 @@ router.post('/:companyId', function handle(req, res) {
     return;
   }
 
-  var companyId = req.params.companyId;
-  Company.findById(companyId, function findResult(findErr, company) {
+  var companyName = req.params.companyName;
+  Company.find({name: companyName}, function findResult(findErr, company) {
     if (findErr) {
       winston.error('POST /api/workspace/: Error while fetching company from DB ' + findErr);
       res.status(500).send('Error while creating workspace.');

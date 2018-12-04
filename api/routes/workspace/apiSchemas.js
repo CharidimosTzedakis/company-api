@@ -1,7 +1,6 @@
 
 //* json schema when receiving a workspace through req.body
 var workspaceJSONSchema = {
-  'type': 'object',
   'properties': {
     'displayName': { 'type': 'string'},
     'users': {
@@ -18,7 +17,6 @@ var workspaceJSONSchema = {
   },
   'required': ['displayName']
 };
-
 
 module.exports = {
   workspaceJSONSchema
