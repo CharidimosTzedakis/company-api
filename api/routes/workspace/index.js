@@ -96,7 +96,7 @@ router.patch('/:companyName', function handle(req, res) {
             res.status(400).send({ error: saveErr });
           }
           winston.info('POST /api/workspace: Sucessfully created workspace: ' + updatedCompany);
-          res.status(201).send();
+          res.status(200).send();
         });
       } else {
         winston.info('PATCH /api/workspace: Workspace not found within the specific company. ');
