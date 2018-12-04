@@ -7,14 +7,15 @@ var Company = require('../../../db/models/company');
 var Ajv = require('ajv');
 var workspaceJSONSchema = require('./workspaceApiSchemas').workspaceJSONSchema;
 var workspaceWithIdJSONSchema = require('./workspaceApiSchemas').workspaceWithIdJSONSchema;
+var ajv = new Ajv({allErrors: true});
+var validateNewWorkspace = ajv.compile(workspaceJSONSchema);
+var validateNewWorkspaceWithId = ajv.compile(workspaceWithIdJSONSchema);
+
 
 // ** create a new workspace entry within a specific company */
 router.post('/:companyName', function handle(req, res) {
   //* validation of json data inside req body
-  var ajv = new Ajv({allErrors: true});
-
-  var validate = ajv.compile(workspaceJSONSchema);
-  var valid = validate(req.body);
+  var valid = validateNewWorkspace(req.body);
   if (!valid) {
     res.status(400).send('Invalid request body.');
     return;
@@ -60,10 +61,7 @@ router.post('/:companyName', function handle(req, res) {
 // ** update an existing workspace within a company */
 router.patch('/:companyName', function handle(req, res) {
   //* validation of json data inside req body
-  var ajv = new Ajv({allErrors: true});
-
-  var validate = ajv.compile(workspaceWithIdJSONSchema);
-  var valid = validate(req.body);
+  var valid = validateNewWorkspaceWithId(req.body);
   if (!valid) {
     res.status(400).send('Invalid request body.');
     return;
