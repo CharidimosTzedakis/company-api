@@ -61,10 +61,10 @@ describe('User API Routes', function userRouteTests() {
 
   describe('DELETE /user/:companyName', function createCompanyTest() {
     it('removes an existing user from a specific workspace in a company', function done(done) {
-      request.patch('/api/user/xara')
+      request.delete('/api/user/xara')
         .send({
-          workspaceName: 'atosbrazil',
-          userEmail: 'charidimos.tzedakis@gmail.com'
+          workspaceName: 'xaraathens',
+          userEmail: 'charidimos.jedakis@gmail.com'
         })
         .expect(200)
         .end(function end(err, res) {

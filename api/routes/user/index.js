@@ -6,14 +6,14 @@ var Company = require('../../../db/models/company');
 var Ajv = require('ajv');
 var createUserJSONSchema = require('./userApiSchemas').createUserJSONSchema;
 var deleteUserJSONSchema = require('./userApiSchemas').deleteUserJSONSchema;
+var ajv = new Ajv({allErrors: true});
+var createUservalidate = ajv.compile(createUserJSONSchema);
+var deleteUservalidate = ajv.compile(deleteUserJSONSchema);
 
 // ** create a new user entry for a specific workspace*/
 router.post('/:companyName', function handle(req, res) {
   //* validation of json data inside req body
-  var ajv = new Ajv({allErrors: true});
-
-  var validate = ajv.compile(createUserJSONSchema);
-  var valid = validate(req.body);
+  var valid = createUservalidate(req.body);
   if (!valid) {
     res.status(400).send('Invalid request body.');
     return;
@@ -66,10 +66,7 @@ router.post('/:companyName', function handle(req, res) {
 // ** remove an existing user from a specific workspace */
 router.delete('/:companyName', function handle(req, res) {
   //* validation of json data inside req body
-  var ajv = new Ajv({allErrors: true});
-
-  var validate = ajv.compile(deleteUserJSONSchema);
-  var valid = validate(req.body);
+  var valid = deleteUservalidate(req.body);
   if (!valid) {
     res.status(400).send('Invalid request body.');
     return;
