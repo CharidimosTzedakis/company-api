@@ -28,12 +28,27 @@ router.post('/:companyName', function handle(req, res) {
       var newUser = req.body.user;
       var workspaceName = req.body.workspaceName;
 
-      //* updating document
       var workspaceToAddUser = company.workspaces.find(function find(w) {
         if (w.name === workspaceName) return true;
         return false;
       });
-      // TODO: check if user(email) already exists
+      if (!workspaceToAddUser) {
+        res.status(400).send('This workspace does not exist for this company.');
+        return;
+      }
+
+      //* check if user already exists
+      var userExists = false;
+      workspaceToAddUser.users.forEach(function forEachUser(u) {
+        if  (u.email === newUser.email) {
+          userExists = true;
+        }
+      });
+      if (userExists) {
+        res.status(400).send('User already exists.');
+        return;
+      }
+
       if (workspaceToAddUser) {
         workspaceToAddUser.users.push(newUser);
       }
