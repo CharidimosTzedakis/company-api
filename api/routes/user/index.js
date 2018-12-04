@@ -54,7 +54,7 @@ router.post('/:companyName', function handle(req, res) {
       company.save(function onSave(saveErr, updatedCompany) {
         if (saveErr) res.status(400).send({ error: saveErr });
         winston.info('PATCH /api/company: Sucessfully updated: ' + updatedCompany);
-        res.send();
+        res.status(201).send();
       });
     } else {
       winston.info('PATCH /api/company: Company not found with id: ' + companyId);
