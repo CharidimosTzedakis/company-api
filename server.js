@@ -8,6 +8,9 @@ app.use(express.json());
 
 var mongoose = require('mongoose');
 global.winston = require('winston');
+if (process.env.NODE_ENV === 'test') {
+  winston.remove(winston.transports.Console);
+}
 var api = require('./api');
 
 // Set up mongoose connection
