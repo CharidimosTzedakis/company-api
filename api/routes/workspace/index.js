@@ -5,8 +5,8 @@ var router = global.express.Router();
 var uuidv1 = require('uuid/v1');
 var Company = require('../../../db/models/company');
 var Ajv = require('ajv');
-var workspaceJSONSchema = require('./apiSchemas').workspaceJSONSchema;
-var workspaceWithIdJSONSchema = require('./apiSchemas').workspaceWithIdJSONSchema;
+var workspaceJSONSchema = require('./workspaceApiSchemas').workspaceJSONSchema;
+var workspaceWithIdJSONSchema = require('./workspaceApiSchemas').workspaceWithIdJSONSchema;
 
 // ** create a new workspace entry within a specific company */
 router.post('/:companyName', function handle(req, res) {

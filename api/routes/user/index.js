@@ -2,36 +2,41 @@
 'use strict';
 
 var router = global.express.Router();
-var uuidv1 = require('uuid/v1');
 var Company = require('../../../db/models/company');
+var Ajv = require('ajv');
+var createUserJSONSchema = require('./userApiSchemas').createUserJSONSchema;
 
 
 // ** create a new user entry for a specific workspace*/
-router.post('/:workspaceId', function handle(req, res) {
-  // TODO: validation of input - body in specific format
-  var workspaceId = req.params.workspaceId;
-  // TODO: find company by using workspace id
-  Company.findById(companyId, function findResult(findErr, companyWithWorkspace) {
+router.post('/:companyName', function handle(req, res) {
+  //* validation of json data inside req body
+  var ajv = new Ajv({allErrors: true});
+
+  var validate = ajv.compile(createUserJSONSchema);
+  var valid = validate(req.body);
+  if (!valid) {
+    res.status(400).send('Invalid request body.');
+    return;
+  }
+
+  var companyName = req.params.companyName;
+  Company.findOne({name: companyName}, function findResult(findErr, company) {
     if (findErr) {
       winston.info('POST /api/user: Error while fetching company from DB ' + findErr);
       res.status(500).send('Error while updating.');
     } else if (company) {
-      var displayName = req.body.displayName;
-      var name = displayName.toLowerCase();
-      var workspaces = req.body.workspaces;
-      var workspacesWithId = workspaces.map(function map(w) {
-        var _id = uuidv1();
-        return Object.assign(w, { _id,  name: w.displayName.toLowerCase() } );
-      });
+      var newUser = req.body.user;
+      var workspaceName = req.body.workspaceName;
 
-      //* update document
-      if (displayName) {
-        company.displayName = displayName;
-        company.name = name;
+      //* updating document
+      var workspaceToAddUser = company.workspaces.find(function find(w) {
+        if (w.name === workspaceName) return true;
+        return false;
+      });
+      if (workspaceToAddUser) {
+        workspaceToAddUser.users.push(newUser);
       }
-      if (workspaces) {
-        company.workspaces = workspacesWithId;
-      }
+
       company.save(function onSave(saveErr, updatedCompany) {
         if (saveErr) res.status(400).send({ error: saveErr });
         winston.info('PATCH /api/company: Sucessfully updated: ' + updatedCompany);
@@ -45,40 +50,19 @@ router.post('/:workspaceId', function handle(req, res) {
 });
 
 // ** remove an existing user from a specific workspace */
-router.delete('/:workspaceId', function handle(req, res) {
-  // TODO: validation of input - body in specific format
-  var companyId = req.params.id;
-  Company.findById(companyId, function findResult(findErr, company) {
-    if (findErr) {
-      winston.info('PATCH /api/company: Error while fetching company from DB ' + findErr);
-      res.status(500).send('Error while updating.');
-    } else if (company) {
-      var displayName = req.body.displayName;
-      var name = displayName.toLowerCase();
-      var workspaces = req.body.workspaces;
-      var workspacesWithId = workspaces.map(function map(w) {
-        var _id = uuidv1();
-        return Object.assign(w, { _id,  name: w.displayName.toLowerCase() } );
-      });
+router.delete('/:companyName', function handle(req, res) {
+  //* validation of json data inside req body
+  var ajv = new Ajv({allErrors: true});
 
-      //* update document
-      if (displayName) {
-        company.displayName = displayName;
-        company.name = name;
-      }
-      if (workspaces) {
-        company.workspaces = workspacesWithId;
-      }
-      company.save(function onSave(saveErr, updatedCompany) {
-        if (saveErr) res.status(400).send({ error: saveErr });
-        winston.info('PATCH /api/company: Sucessfully updated: ' + updatedCompany);
-        res.send();
-      });
-    } else {
-      winston.info('PATCH /api/company: Company not found with id: ' + companyId);
-      res.status(404).send('PATCH /api/company: company not found.');
-    }
-  });
+  var validate = ajv.compile(createUserJSONSchema);
+  var valid = validate(req.body);
+  if (!valid) {
+    res.status(400).send('Invalid request body.');
+    return;
+  }
+
+  var companyName = req.params.companyName;
+
 });
 
 module.exports = router;
