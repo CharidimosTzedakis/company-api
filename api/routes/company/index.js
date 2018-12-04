@@ -4,11 +4,23 @@
 var router = global.express.Router();
 var uuidv1 = require('uuid/v1');
 var Company = require('../../../db/models/company');
+var Ajv = require('ajv');
+var newCompanyJSONSchema = require('./companyApiSchemas').newCompanyJSONSchema;
+var updateCompanyJSONSchema = require('./companyApiSchemas').updateCompanyJSONSchema;
 
+var ajv = new Ajv({allErrors: true});
+var validateCreateCompany = ajv.compile(newCompanyJSONSchema);
+var validateUpdateCompany = ajv.compile(updateCompanyJSONSchema);
 
 // ** create a new company entry */
 router.post('/', function handle(req, res) {
-  // TODO: validation of input - body in specific format
+  //* validation of json data inside req body
+  var valid = validateCreateCompany(req.body);
+  if (!valid) {
+    res.status(400).send('Invalid request body.');
+    return;
+  }
+
   var displayName = req.body.displayName;
   var name = displayName.toLowerCase();
   var workspaces = req.body.workspaces;
@@ -38,7 +50,13 @@ router.post('/', function handle(req, res) {
 
 // ** update an existing company */
 router.patch('/:id', function handle(req, res) {
-  // TODO: validation of input - body in specific format
+  //* validation of json data inside req body
+  var valid = validateUpdateCompany(req.body);
+  if (!valid) {
+    res.status(400).send('Invalid request body.');
+    return;
+  }
+
   var companyId = req.params.id;
   Company.findById(companyId, function findResult(findErr, company) {
     if (findErr) {
