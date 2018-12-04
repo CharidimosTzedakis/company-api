@@ -4,7 +4,7 @@
 var router = global.express.Router();
 var Company = require('../../../db/models/company');
 var Ajv = require('ajv');
-var createUserJSONSchema = require('./userApiSchemas').createUserJSONSchema;
+var userApiJSONSchema = require('./userApiSchemas').userApiJSONSchema;
 
 
 // ** create a new user entry for a specific workspace*/
@@ -12,7 +12,7 @@ router.post('/:companyName', function handle(req, res) {
   //* validation of json data inside req body
   var ajv = new Ajv({allErrors: true});
 
-  var validate = ajv.compile(createUserJSONSchema);
+  var validate = ajv.compile(userApiJSONSchema);
   var valid = validate(req.body);
   if (!valid) {
     res.status(400).send('Invalid request body.');
@@ -33,6 +33,7 @@ router.post('/:companyName', function handle(req, res) {
         if (w.name === workspaceName) return true;
         return false;
       });
+      // TODO: check if user(email) already exists
       if (workspaceToAddUser) {
         workspaceToAddUser.users.push(newUser);
       }
@@ -54,7 +55,7 @@ router.delete('/:companyName', function handle(req, res) {
   //* validation of json data inside req body
   var ajv = new Ajv({allErrors: true});
 
-  var validate = ajv.compile(createUserJSONSchema);
+  var validate = ajv.compile(userApiJSONSchema);
   var valid = validate(req.body);
   if (!valid) {
     res.status(400).send('Invalid request body.');

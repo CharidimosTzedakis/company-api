@@ -1,25 +1,22 @@
 
 //* json schema when receiving a workspace through req.body
-var createUserJSONSchema = {
+var userApiJSONSchema = {
   'properties': {
-    'displayName': { 'type': 'string'},
-    'users': {
-      'type': 'array',
-      'items': {
-        'type': 'object',
-        'properties': {
-          'email': { 'type': 'string'},
-          'role': {'type': 'string', 'enum': ['basic', 'admin']}
-        },
-        'required': ['email', 'role'],
-        'additionalProperties': false
-      }
+    'workspaceName': { 'type': 'string'},
+    'user': {
+      'type': 'object',
+      'properties': {
+        'email': { 'type': 'string'},
+        'role': {'type': 'string', 'enum': ['basic', 'admin']}
+      },
+      'required': ['email', 'role'],
+      'additionalProperties': false
     }
   },
-  'required': ['displayName'],
+  'required': ['workspaceName', 'user'],
   'additionalProperties': false
 };
 
 module.exports = {
-  createUserJSONSchema
+  userApiJSONSchema
 };
