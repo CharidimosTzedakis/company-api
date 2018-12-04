@@ -1,7 +1,6 @@
 /* global DB, winston, express */
 
 global.express = require('express');
-var bodyParser = require('body-parser');
 var app = global.express();
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
