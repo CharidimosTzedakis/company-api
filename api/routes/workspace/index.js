@@ -6,6 +6,7 @@ var uuidv1 = require('uuid/v1');
 var Company = require('../../../db/models/company');
 var Ajv = require('ajv');
 var workspaceJSONSchema = require('./apiSchemas').workspaceJSONSchema;
+var workspaceWithIdJSONSchema = require('./apiSchemas').workspaceWithIdJSONSchema;
 
 // ** create a new workspace entry within a specific company */
 router.post('/:companyName', function handle(req, res) {
@@ -57,10 +58,19 @@ router.post('/:companyName', function handle(req, res) {
 });
 
 // ** update an existing workspace within a company */
-router.patch('/:companyId', function handle(req, res) {
-  // TODO: validation of input - body in specific format
-  var companyId = req.params.companyId;
-  Company.findById(companyId, function findResult(findErr, company) {
+router.patch('/:companyName', function handle(req, res) {
+  //* validation of json data inside req body
+  var ajv = new Ajv({allErrors: true});
+
+  var validate = ajv.compile(workspaceWithIdJSONSchema);
+  var valid = validate(req.body);
+  if (!valid) {
+    res.status(400).send('Invalid request body.');
+    return;
+  }
+
+  var companyName = req.params.companyName;
+  Company.findOne({name: companyName}, function findResult(findErr, company) {
     if (findErr) {
       winston.error('PATCH /api/workspace/: Error while fetching company from DB ' + findErr);
       res.status(500).send('Error while creating workspace.');
