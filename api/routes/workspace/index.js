@@ -20,7 +20,7 @@ router.post('/:companyName', function handle(req, res) {
   }
 
   var companyName = req.params.companyName;
-  Company.find({name: companyName}, function findResult(findErr, company) {
+  Company.findOne({name: companyName}, function findResult(findErr, company) {
     if (findErr) {
       winston.error('POST /api/workspace/: Error while fetching company from DB ' + findErr);
       res.status(500).send('Error while creating workspace.');
@@ -38,10 +38,10 @@ router.post('/:companyName', function handle(req, res) {
 
       //* update document
       if (displayNameWorkspace) {
-        company.workspaces = newWorkspaceWithId;
+        company.workspaces.push(newWorkspaceWithId);
       }
 
-      company.save(function onSave(saveErr, updatedCompany) {
+      company.save( function onSave(saveErr, updatedCompany) {
         if (saveErr) {
           winston.error('POST /api/workspace: Error while creating workspace: ' + saveErr);
           res.status(400).send({ error: saveErr });
