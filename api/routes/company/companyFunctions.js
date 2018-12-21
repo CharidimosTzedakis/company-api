@@ -4,11 +4,8 @@
 
 var uuidv1 = require('uuid/v1');
 var CompanyModel = require('../../../db/models/company');
-
 var Ajv = require('ajv');
-var ajv = new Ajv({allErrors: true});
-var newCompanyJSONSchema = require('./companyApiSchemas').newCompanyJSONSchema;
-var validateCreateCompany = ajv.compile(newCompanyJSONSchema);
+var companySchemas = require('./companyApiSchemas');
 
 function createCompany(req, res, next, Company = CompanyModel) {
   //* validation of json data inside req body
@@ -45,7 +42,21 @@ function createCompany(req, res, next, Company = CompanyModel) {
   });
 }
 
+function createValidator(validatorType) {
+  var ajv = new Ajv({allErrors: true});
+
+  switch (validatorType) {
+  case 'newCompany':
+    return ajv.compile(companySchemas.newCompanyJSONSchema);
+  case 'updateCompany':
+    return ajv.compile(companySchemas.updateCompanyJSONSchema);
+  default:
+    return function dummyValidator() {return true; };
+  }
+}
+
 module.exports = {
-  createCompany
+  createCompany,
+  createValidator
 };
 

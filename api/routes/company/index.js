@@ -3,20 +3,11 @@
 
 var router = global.express.Router();
 var Company = require('../../../db/models/company');
-var Ajv = require('ajv');
-var createCompany = require('./companyFunctions').createCompany;
-var updateCompanyJSONSchema = require('./companyApiSchemas').updateCompanyJSONSchema;
+var companyFunc = require('./companyFunctions');
 
-var ajv = new Ajv({allErrors: true});
-var validateUpdateCompany = ajv.compile(updateCompanyJSONSchema);
-
-// TODO: here is the validator
-/* app.all('/secret', function (req, res, next) {
-  console.log('Accessing the secret section ...')
-  next() // pass control to the next handler
-}) */
 // ** create a new company entry */
-router.post('/', createCompany );
+var newCompanyReqBodyValidator = companyFunc.createValidator('newCompany');
+router.post('/', newCompanyReqBodyValidator, companyFunc.createCompany );
 
 // ** update an existing company */
 router.patch('/:id', function handle(req, res) {
@@ -50,6 +41,7 @@ router.patch('/:id', function handle(req, res) {
         company.workspaces = workspacesWithId;
       }
       company.save(function onSave(saveErr, updatedCompany) {
+        if (saveErr) next(saveErr);
         if (saveErr) res.status(400).send({ error: saveErr });
         winston.info('PATCH /api/company: Sucessfully updated: ' + updatedCompany);
         res.send();
@@ -59,6 +51,12 @@ router.patch('/:id', function handle(req, res) {
       res.status(404).send('PATCH /api/company: company not found.');
     }
   });
+});
+
+
+//* error handler
+router.use( fucntion (err, req, res) {
+
 });
 
 module.exports = router;
