@@ -42,12 +42,15 @@ function createCompany(req, res, next, Company = CompanyModel) {
   });
 }
 
-function createValidator(validatorType) {
+function validatorFactory(validatorType) {
   var ajv = new Ajv({allErrors: true});
 
+  //TODO; create a wrapper for ajv.compile (req, res, next )
   switch (validatorType) {
   case 'newCompany':
-    return ajv.compile(companySchemas.newCompanyJSONSchema);
+    return function newCompanyValidator(req, res, next) {
+      ajv.compile(companySchemas.newCompanyJSONSchema);
+    };
   case 'updateCompany':
     return ajv.compile(companySchemas.updateCompanyJSONSchema);
   default:

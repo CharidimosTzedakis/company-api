@@ -6,7 +6,7 @@ var Company = require('../../../db/models/company');
 var companyFunc = require('./companyFunctions');
 
 // ** create a new company entry */
-var newCompanyReqBodyValidator = companyFunc.createValidator('newCompany');
+var newCompanyReqBodyValidator = companyFunc.validatorFactory('newCompany');
 router.post('/', newCompanyReqBodyValidator, companyFunc.createCompany );
 
 // ** update an existing company */
