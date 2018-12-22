@@ -8,12 +8,6 @@ var Ajv = require('ajv');
 var companySchemas = require('./companyApiSchemas');
 
 function createCompany(req, res, next, Company = CompanyModel) {
-  //* validation of json data inside req body
-  var valid = validateCreateCompany(req.body);
-  if (!valid) {
-    res.status(400).send('Invalid request body.');
-    return;
-  }
 
   var displayName = req.body.displayName;
   var name = displayName.toLowerCase();
@@ -45,14 +39,25 @@ function createCompany(req, res, next, Company = CompanyModel) {
 function validatorFactory(validatorType) {
   var ajv = new Ajv({allErrors: true});
 
-  //TODO; create a wrapper for ajv.compile (req, res, next )
   switch (validatorType) {
   case 'newCompany':
     return function newCompanyValidator(req, res, next) {
-      ajv.compile(companySchemas.newCompanyJSONSchema);
+      var newValidator = ajv.compile(companySchemas.newCompanyJSONSchema);
+      if (newValidator(req.body)) {
+        next();
+      } else {
+        res.status(400).send('Invalid request body.');
+      }
     };
   case 'updateCompany':
-    return ajv.compile(companySchemas.updateCompanyJSONSchema);
+    var updateValidator = ajv.compile(companySchemas.updateCompanyJSONSchema);
+    return function updateCompanyValidator(req, res, next) {
+      if (updateValidator(req.body)) {
+        next();
+      } else {
+        res.status(400).send('Invalid request body.');
+      }
+    };
   default:
     return function dummyValidator() {return true; };
   }
@@ -60,6 +65,6 @@ function validatorFactory(validatorType) {
 
 module.exports = {
   createCompany,
-  createValidator
+  validatorFactory
 };
 

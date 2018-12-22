@@ -55,7 +55,7 @@ router.patch('/:id', function handle(req, res) {
 
 
 //* error handler
-router.use( fucntion (err, req, res) {
+router.use( function (err, req, res) {
 
 });
 
