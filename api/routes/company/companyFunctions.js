@@ -8,7 +8,6 @@ var Ajv = require('ajv');
 var companySchemas = require('./companyApiSchemas');
 
 function createCompany(req, res, next, Company = CompanyModel) {
-
   var displayName = req.body.displayName;
   var name = displayName.toLowerCase();
   var workspaces = req.body.workspaces;
@@ -41,8 +40,8 @@ function validatorFactory(validatorType) {
 
   switch (validatorType) {
   case 'newCompany':
+    var newValidator = ajv.compile(companySchemas.newCompanyJSONSchema);
     return function newCompanyValidator(req, res, next) {
-      var newValidator = ajv.compile(companySchemas.newCompanyJSONSchema);
       if (newValidator(req.body)) {
         next();
       } else {
