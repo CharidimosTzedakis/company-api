@@ -33,6 +33,7 @@ function createCompany(req, res, next, Company = CompanyModel) {
     winston.info('PATCH /api/company: Sucessfully created company: ' + createdCompany);
     res.status(201).send();
   });
+  return companyDocument;
 }
 
 function validatorFactory(validatorType) {
