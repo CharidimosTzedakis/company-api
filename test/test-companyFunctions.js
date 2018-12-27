@@ -28,13 +28,17 @@ describe('companyFunctions.js', function CompanyFunctionsUnitTests() {
         }
       };
       // TODO: mock better res here
-      var res = {};
+      var res = {
+        status: function status() { return this;},
+        send: function send() {}
+      };
       var next = function next() {};
       var company = {
         create: sinon.fake.yieldsAsync(null, {})
       };
       var companyDocument = companyFunctions.createCompany(req, res, next, company);
       expect(companyDocument).to.have.property('_id');
+      done();
     });
   });
 });
