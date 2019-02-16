@@ -27,17 +27,22 @@ describe('companyFunctions.js', function CompanyFunctionsUnitTests() {
           ]
         }
       };
-      // TODO: mock better res here
+
       var res = {
-        status: function status() { return this;},
-        send: function send() {}
+        locals: {}
       };
       var next = function next() {};
+      /*
       var company = {
         create: sinon.fake.yieldsAsync(null, createdCompany)
-      };
-      var companyDocument = companyFunctions.createCompany(req, res, next, company);
+      };*/
+      companyFunctions.createCompany(req, res, next);
+      var companyDocument = res.locals.companyDocument;
       expect(companyDocument).to.have.property('_id');
+      expect(companyDocument).to.have.property('displayName');
+      expect(companyDocument).to.have.property('name');
+      expect(companyDocument).to.have.property('workspaces');
+      expect(companyDocument.name).to.be.equal(req.displayName.toLowerCase());
       done();
     });
   });

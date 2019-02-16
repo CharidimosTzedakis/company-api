@@ -27,7 +27,7 @@ function createCompany(req, res, next) {
 
   res.locals.companyDocument = companyDocument;
   next();
-  return companyDocument;
+  return;
 }
 
 /**

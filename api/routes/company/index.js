@@ -7,9 +7,10 @@ var companyFunc = require('./companyFunctions');
 
 // ** create a new company entry */
 var newCompanyReqBodyValidator = companyFunc.validatorFactory('newCompany');
-router.post('/', newCompanyReqBodyValidator, companyFunc.createCompany );
+router.post('/', newCompanyReqBodyValidator, companyFunc.createCompany, companyFunc.persistToDBAndRespond('create') );
 
 // ** update an existing company */
+/*
 router.patch('/:id', function handle(req, res) {
   //* validation of json data inside req body
   var valid = validateUpdateCompany(req.body);
@@ -52,11 +53,12 @@ router.patch('/:id', function handle(req, res) {
     }
   });
 });
+*/
 
-
+/*
 //* error handler
 router.use( function (err, req, res) {
 
-});
+});*/
 
 module.exports = router;
