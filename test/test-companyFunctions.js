@@ -34,7 +34,7 @@ describe('companyFunctions.js', function CompanyFunctionsUnitTests() {
       };
       var next = function next() {};
       var company = {
-        create: sinon.fake.yieldsAsync(null, {})
+        create: sinon.fake.yieldsAsync(null, createdCompany)
       };
       var companyDocument = companyFunctions.createCompany(req, res, next, company);
       expect(companyDocument).to.have.property('_id');

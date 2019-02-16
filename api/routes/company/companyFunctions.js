@@ -7,7 +7,7 @@ var CompanyModel = require('../../../db/models/company');
 var Ajv = require('ajv');
 var companySchemas = require('./companyApiSchemas');
 
-function createCompany(req, res, next, Company = CompanyModel) {
+function createCompany(req, res, next) {
   var displayName = req.body.displayName;
   var name = displayName.toLowerCase();
   var workspaces = req.body.workspaces;
@@ -25,15 +25,37 @@ function createCompany(req, res, next, Company = CompanyModel) {
     workspaces: workspacesWithId
   };
 
-  Company.create(companyDocument, function result(errCreate, createdCompany) {
-    if (errCreate) {
-      winston.info('POST /api/company: Error while creating company document ' + errCreate);
-      res.status(500).send('Error while creating company entry.');
-    }
-    winston.info('PATCH /api/company: Sucessfully created company: ' + createdCompany);
-    res.status(201).send();
-  });
+  res.locals.companyDocument = companyDocument;
+  next();
   return companyDocument;
+}
+
+/**
+ * Persist company document to DB
+ * @param {Object} res - express res object, contains CompanyDocument to be saved or updated
+ * in res.locals => res.locals.CompanyDocument
+ * @param {('create'|'save')} mode - create new Company Document or update existing
+ * @param {Object} Model - Company Model for accessing the DB
+ * @returns {Object} - responds with 201 or 500 status
+ */
+function persistToDBAndRespond( res, mode, Model = CompanyModel) {
+  if (res.locals.CompanyDocument) {
+    switch (mode) {
+    case 'create':
+      Model.create(res.locals.CompanyDocument, function result(errCreate, createdCompany) {
+        if (errCreate) {
+          winston.info('POST /api/company: Error while creating company document ' + errCreate);
+          return res.status(500).send('Error while creating company entry.');
+        }
+        winston.info('PATCH /api/company: Sucessfully created company: ' + createdCompany);
+        return res.status(201).send();
+      });
+      break;
+    default:
+      return;
+    }
+  }
+  return;
 }
 
 function validatorFactory(validatorType) {
@@ -65,6 +87,7 @@ function validatorFactory(validatorType) {
 
 module.exports = {
   createCompany,
-  validatorFactory
+  validatorFactory,
+  persistToDBAndRespond
 };
 
