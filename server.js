@@ -15,9 +15,9 @@ var api = require('./api');
 // Set up mongoose connection
 var mongoDB;
 if ( process.env.NODE_ENV === 'test') {
-  mongoDB = 'mongodb://127.0.0.1/BusinessTest';
+  mongoDB = 'mongodb://192.168.99.100/BusinessTest';
 } else {
-  mongoDB = 'mongodb://127.0.0.1/Business';
+  mongoDB = 'mongodb://192.168.99.100/Business';
 }
 mongoose.connect(mongoDB);
 global.DB = mongoose.connection;

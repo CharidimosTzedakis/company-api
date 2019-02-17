@@ -2,53 +2,18 @@
 'use strict';
 
 var router = global.express.Router();
-var uuidv1 = require('uuid/v1');
 var Company = require('../../../db/models/company');
-var Ajv = require('ajv');
-var newCompanyJSONSchema = require('./companyApiSchemas').newCompanyJSONSchema;
-var updateCompanyJSONSchema = require('./companyApiSchemas').updateCompanyJSONSchema;
-
-var ajv = new Ajv({allErrors: true});
-var validateCreateCompany = ajv.compile(newCompanyJSONSchema);
-var validateUpdateCompany = ajv.compile(updateCompanyJSONSchema);
+var companyFunc = require('./companyFunctions');
 
 // ** create a new company entry */
-router.post('/', function handle(req, res) {
-  //* validation of json data inside req body
-  var valid = validateCreateCompany(req.body);
-  if (!valid) {
-    res.status(400).send('Invalid request body.');
-    return;
-  }
-
-  var displayName = req.body.displayName;
-  var name = displayName.toLowerCase();
-  var workspaces = req.body.workspaces;
-  var workspacesWithId = workspaces.map(function map(w) {
-    var _id = uuidv1();
-    return Object.assign(w, { _id,  name: w.displayName.toLowerCase() } );
-  });
-  //* RFC4122 version 1 UUID
-  var newId = uuidv1();
-  // var newId = new mongoose.mongo.ObjectId(uuidv1());
-  var  companyDocument = {
-    _id: newId,
-    displayName,
-    name,
-    workspaces: workspacesWithId
-  };
-
-  Company.create(companyDocument, function result(errCreate, createdCompany) {
-    if (errCreate) {
-      winston.info('POST /api/company: Error while creating company document ' + errCreate);
-      res.status(500).send('Error while creating company entry.');
-    }
-    winston.info('PATCH /api/company: Sucessfully created company: ' + createdCompany);
-    res.status(201).send();
-  });
-});
+var newCompanyReqBodyValidator = companyFunc.validatorFactory('newCompany');
+router.post('/',
+  newCompanyReqBodyValidator,
+  companyFunc.createCompany,
+  companyFunc.persistToDBAndRespond({mode: 'create', Model: Company}) );
 
 // ** update an existing company */
+/*
 router.patch('/:id', function handle(req, res) {
   //* validation of json data inside req body
   var valid = validateUpdateCompany(req.body);
@@ -80,6 +45,7 @@ router.patch('/:id', function handle(req, res) {
         company.workspaces = workspacesWithId;
       }
       company.save(function onSave(saveErr, updatedCompany) {
+        if (saveErr) next(saveErr);
         if (saveErr) res.status(400).send({ error: saveErr });
         winston.info('PATCH /api/company: Sucessfully updated: ' + updatedCompany);
         res.send();
@@ -90,5 +56,12 @@ router.patch('/:id', function handle(req, res) {
     }
   });
 });
+*/
+
+/*
+//* error handler
+router.use( function (err, req, res) {
+
+});*/
 
 module.exports = router;
