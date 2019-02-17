@@ -32,14 +32,14 @@ function createCompany(req, res, next) {
 
 /**
  * Persist company document to DB
- * @param {Object} res - express res object, contains CompanyDocument to be saved or updated
- * in res.locals => res.locals.CompanyDocument
- * @param {('create'|'save')} mode - create new Company Document or update existing
+ * @param {Object} options - configure middleware:
+ * options.mode -> 'create' --> create a new Company Document
+ * options.mode -> 'save' --> update specific Company Document
  * @param {Object} Model - Company Model for accessing the DB
- * @returns {Object} - responds with 201 or 500 status
+ * @returns {Object} - responds with 201 CREATED or 500 status
  */
-function persistToDBAndRespond( res, mode, Model = CompanyModel) {
-  if (res.locals.CompanyDocument) {
+function persistToDBAndRespond({mode, Model}) {
+  return function persistRespond(res) {
     switch (mode) {
     case 'create':
       Model.create(res.locals.CompanyDocument, function result(errCreate, createdCompany) {
@@ -54,8 +54,7 @@ function persistToDBAndRespond( res, mode, Model = CompanyModel) {
     default:
       return;
     }
-  }
-  return;
+  };
 }
 
 function validatorFactory(validatorType) {
