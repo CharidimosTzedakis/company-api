@@ -42,7 +42,7 @@ describe('companyFunctions.js', function CompanyFunctionsUnitTests() {
       expect(companyDocument).to.have.property('displayName');
       expect(companyDocument).to.have.property('name');
       expect(companyDocument).to.have.property('workspaces');
-      expect(companyDocument.name).to.be.equal(req.displayName.toLowerCase());
+      expect(companyDocument.name).to.be.equal(req.body.displayName.toLowerCase());
       done();
     });
   });

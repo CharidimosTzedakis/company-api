@@ -27,7 +27,6 @@ function createCompany(req, res, next) {
 
   res.locals.companyDocument = companyDocument;
   next();
-  return;
 }
 
 /**
@@ -39,10 +38,10 @@ function createCompany(req, res, next) {
  * @returns {Object} - responds with 201 CREATED or 500 status
  */
 function persistToDBAndRespond({mode, Model}) {
-  return function persistRespond(res) {
+  return function persistRespond(req, res) {
     switch (mode) {
     case 'create':
-      Model.create(res.locals.CompanyDocument, function result(errCreate, createdCompany) {
+      Model.create(res.locals.companyDocument, function result(errCreate, createdCompany) {
         if (errCreate) {
           winston.info('POST /api/company: Error while creating company document ' + errCreate);
           return res.status(500).send('Error while creating company entry.');
