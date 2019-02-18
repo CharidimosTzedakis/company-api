@@ -1,4 +1,4 @@
-## xara-test-1
+## company-api
 
 start the microservice with: **npm start**
 run the test suite with: **npm test**
