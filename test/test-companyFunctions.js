@@ -4,7 +4,19 @@ var sinon = require('sinon');
 var companyFunctions = require('../api/routes/company/companyFunctions');
 
 describe('companyFunctions.js', function CompanyFunctionsUnitTests() {
-  describe('createCompany()', function createCompanyUnitTests() {
+
+  describe('validatorFactory', function validatorFactoryUnitTests() {
+    it('should create validator that accepts a valid new company JSON', function done() {
+    });
+    it('should create validator that rejects a invalid new company JSON', function done() {
+    });
+    it('should create validator that accepts a valid update company JSON', function done() {
+    });
+    it('should create validator that rejects an invalid update company JSON', function done() {
+    });
+  });
+
+  describe('createCompany', function createCompanyUnitTests() {
     it('should prepare a company document to be written to database', function done(done) {
       var req = {
         body: {
@@ -44,6 +56,17 @@ describe('companyFunctions.js', function CompanyFunctionsUnitTests() {
       expect(companyDocument).to.have.property('workspaces');
       expect(companyDocument.name).to.be.equal(req.body.displayName.toLowerCase());
       done();
+    });
+  });
+
+  describe('persistToDBAndRespond', function persistToDBAndRespondUnitTests() {
+    it('should respond with 201 CREATED when successfully created new Company Document', function done() {
+    });
+    it('should respond with 500 when failing to create new Company Document', function done() {
+    });
+    it('should respond with 200 OK when successfully updated new Company Document', function done() {
+    });
+    it('should respond with 500 when failing to update new Company Document', function done() {
     });
   });
 });

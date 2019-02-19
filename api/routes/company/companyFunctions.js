@@ -3,10 +3,48 @@
 'use strict';
 
 var uuidv1 = require('uuid/v1');
-var CompanyModel = require('../../../db/models/company');
 var Ajv = require('ajv');
 var companySchemas = require('./companyApiSchemas');
 
+/** Creates validator func for JSON input in the body of request
+ *  for creating new Company and updating existing
+ * @param {'newCompany' | 'updateCompany'} validatorType - type of validation (new or update)
+ * @returns{function} - validator function to be used with Ajv
+ */
+function validatorFactory(validatorType) {
+  var ajv = new Ajv({allErrors: true});
+
+  switch (validatorType) {
+  case 'newCompany':
+    var newValidator = ajv.compile(companySchemas.newCompanyJSONSchema);
+    return function newCompanyValidator(req, res, next) {
+      if (newValidator(req.body)) {
+        next();
+      } else {
+        res.status(400).send('Invalid request body.');
+      }
+    };
+  case 'updateCompany':
+    var updateValidator = ajv.compile(companySchemas.updateCompanyJSONSchema);
+    return function updateCompanyValidator(req, res, next) {
+      if (updateValidator(req.body)) {
+        next();
+      } else {
+        res.status(400).send('Invalid request body.');
+      }
+    };
+  default:
+    return function dummyValidator() {return true; };
+  }
+}
+
+/**
+ * Takes the Validated input and creates a Company Object to be persited to DB
+ * @param {Object} req - express middleware req obj
+ * @param {Object} res - express middleware res obj
+ * @param {function} next - express middleware next function
+ * @returns {Object} - return invokes next()
+ */
 function createCompany(req, res, next) {
   var displayName = req.body.displayName;
   var name = displayName.toLowerCase();
@@ -26,7 +64,7 @@ function createCompany(req, res, next) {
   };
 
   res.locals.companyDocument = companyDocument;
-  next();
+  return next();
 }
 
 /**
@@ -54,33 +92,6 @@ function persistToDBAndRespond({mode, Model}) {
       return;
     }
   };
-}
-
-function validatorFactory(validatorType) {
-  var ajv = new Ajv({allErrors: true});
-
-  switch (validatorType) {
-  case 'newCompany':
-    var newValidator = ajv.compile(companySchemas.newCompanyJSONSchema);
-    return function newCompanyValidator(req, res, next) {
-      if (newValidator(req.body)) {
-        next();
-      } else {
-        res.status(400).send('Invalid request body.');
-      }
-    };
-  case 'updateCompany':
-    var updateValidator = ajv.compile(companySchemas.updateCompanyJSONSchema);
-    return function updateCompanyValidator(req, res, next) {
-      if (updateValidator(req.body)) {
-        next();
-      } else {
-        res.status(400).send('Invalid request body.');
-      }
-    };
-  default:
-    return function dummyValidator() {return true; };
-  }
 }
 
 module.exports = {
