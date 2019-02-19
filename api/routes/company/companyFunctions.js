@@ -6,9 +6,10 @@ var uuidv1 = require('uuid/v1');
 var Ajv = require('ajv');
 var companySchemas = require('./companyApiSchemas');
 
-/**
- * 
- * @param {*} validatorType 
+/** Creates validator func for JSON input in the body of request
+ *  for creating new Company and updating existing
+ * @param {'newCompany' | 'updateCompany'} validatorType - type of validation (new or update)
+ * @returns{function} - validator function to be used with Ajv
  */
 function validatorFactory(validatorType) {
   var ajv = new Ajv({allErrors: true});
@@ -42,7 +43,7 @@ function validatorFactory(validatorType) {
  * @param {Object} req - express middleware req obj
  * @param {Object} res - express middleware res obj
  * @param {function} next - express middleware next function
- * @returns {*} - does not have return
+ * @returns {Object} - return invokes next()
  */
 function createCompany(req, res, next) {
   var displayName = req.body.displayName;
